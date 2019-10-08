@@ -1,0 +1,30 @@
+#x!/bin/sh
+unset SESSION_MANAGER
+unset DBUS_SESSION_BUS_ADDRESS
+
+LOGTAG="xstartup"
+
+#============================================================================
+# Helper Fucitons
+#============================================================================
+
+ei () { printf "[INF] $LOGTAG: $1\n";:;}  #ei=emit inf msg
+ew () { printf "[WRN] $LOGTAG: $1\n";:;}  #ew=emit wrn msg
+ee () { printf "[ERR] $LOGTAG: $1\n";:;}  #ee=emit err msg
+
+
+lxd_set_configuration()
+{
+	local RESOLUTION="$(xdpyinfo | awk '/dimensions/{printf $2}')"
+	local FHD="1920x1080"
+	local WQHD="2560x1600"
+}
+
+lxd_set_configuration
+sleep .5
+
+exec startfluxbox &
+
+sleep .9
+
+exec pulseaudio -D
