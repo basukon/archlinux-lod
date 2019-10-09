@@ -1,0 +1,90 @@
+#! /bin/sh
+# vim: expandtab:tabstop=4:softtabstop=4:shiftwidth=4:autoindent:cindent
+
+#============================================================================
+# Run X Server
+#============================================================================
+
+rm -f  /tmp/.X1-lock  /tmp/.X11-unix/X1
+rm -f  /share/run/vncsrv.usk
+
+
+#SRVTYPE=wrapped_tight
+#SRVTYPE=wrapped_turbo
+SRVTYPE=wrapped_tiger
+
+
+case $SRVTYPE in
+
+wrapped_tight)
+    # '/usr/bin/vncserver' is a script written in perl
+    #cp /home/dextop/projects/dextop/tightvnc/Xvnc/programs/Xserver/Xvnc /usr/bin/Xtightvnc
+    VNCBIN=/usr/bin/vncserver_alt
+    sudo -i -u dextop $VNCBIN -geometry $1 -depth 24 -dpi $2 -localhost :1
+                     #$VNCBIN -geometry $1 -depth 24 -localhost :1
+    ;;
+
+wrapped_turbo)
+    # '/usr/bin/vncserver' is a script written in perl
+    cp /home/dextop/projects/turbovnc/out/bin/Xvnc                       /usr/bin/Xtightvnc
+    VNCBIN=/usr/bin/vncserver_alt
+    sudo -i -u dextop $VNCBIN -disconnect -geometry $1 -depth 24 -localhost :1
+                     #$VNCBIN -geometry $1 -depth 24 -localhost :1
+    ;;
+
+
+wrapped_tiger)
+    # '/usr/bin/vncserver' is a script written in perl
+    #cp /home/dextop/projects/dextop/tigervnc/unix/xserver/hw/vnc/Xvnc    /usr/bin/Xtightvnc
+    VNCBIN=/usr/bin/vncserver_alt
+    sudo -i -u dextop $VNCBIN -geometry $1 -dpi $2 -depth 24 -SecurityTypes None -localhost :1
+
+    ;;
+
+
+tightvnc)
+    VNCBIN=/home/dextop/projects/dextop/tightvnc/Xvnc/programs/Xserver/Xvnc
+    FO=/usr/share/fonts/X11
+    sudo -i -u dextop $VNCBIN :1 \
+        -desktop X \
+        -auth /home/dextop/.Xauthority \
+        -geometry $1 \
+        -depth 24 \
+        -dpi $2 \
+        -rfbwait 120000 \
+        -rfbauth /home/dextop/.vnc/passwd \
+        -rfbport 5901 \
+        -fp $FO/misc/,$FO/Type1/,$FO/75dpi/,$FO/100dpi/ \
+        -co /etc/X11/rgb \
+        -localhost :1
+    ;;
+
+turbovnc)
+    VNCBIN=/home/dextop/projects/turbovnc/out/bin/Xvnc
+
+    # tune resolution for monitor: Samsung s24e650 (ls24s65KPLH) - 1920x1080($1) 23.6" 93($) ppi
+    sudo   -i -u dextop $VNCBIN -geometry $1 -dpi $2  -depth 24 -localhost :1  -rfbauth /home/dextop/.vnc/passwd
+    #sudo  -i -u dextop $VNCBIN -geometry $1 -dpi $2  -depth 24 -localhost :1  -rfbauth /home/dextop/.vnc/passwd   -securitytypes vnc
+    #sudo  -i -u dextop $VNCBIN -geometry $1 -dpi $2  -depth 24 -localhost :1  -rfbauth /home/dextop/.vnc/passwd   -securitytypes plain
+    #service lightdm start
+
+    # tune resolution for tablet: Samsung Tab S3 - 1536x2048 9.7" 264ppi
+    #sudo -i -u dextop vncserver -geometry 2048x1536 -dpi 264 -depth 24 -localhost :1
+
+    # tune resolution for the phone display: Galaxy S8 - 1440x2960 5.8" 570ppi
+    #sudo -i -u dextop vncserver -geometry 2960x1440 -dpi 570 -depth 24 -localhost :1
+    ;;
+
+*)
+    echo "[ERR] pls, choose a valid SRVTYPE: tightvnc or turbovnc"
+    exit 1
+
+esac
+
+
+#cat     /home/dextop/.vnc/localhost:1.log
+cp /home/dextop/.vnc/localhost:1.log /home/dextop/
+#tail -f /home/dextop/.vnc/localhost:1.log
+
+while : ; do sleep 1 ; done   #sleep forever until the parent dies
+

@@ -23,8 +23,18 @@ lxd_set_configuration()
 lxd_set_configuration
 sleep .5
 
+#[ -r $HOME/.Xresources ] && xrdb $HOME/.Xresources
+#xsetroot -solid grey
+
+# Xfce startup
+#exec startxfce4 &
+#dbus-launch startxfce4 &
+
+# Fluxbox startup
 exec startfluxbox &
+xrdb ~/.Xresources
+xcompmgr -F -s &
 
+# Start audio system
 sleep .9
-
 exec pulseaudio -D
