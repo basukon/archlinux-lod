@@ -30,6 +30,13 @@ if [ -x /sbin/sysctl -o -x /bin/sysctl ]; then
     done
 fi
 
+if [ ! -e /etc/machine-id ]; then
+    systemd-machine-id-setup
+fi
+if [ ! -e /etc/locale.conf ]; then
+    systemd-firstboot --locale=en_US.UTF-8
+fi
+
 if [ ! -e /var/log/wtmp ]; then
     install -m0664 -o root -g utmp /dev/null /var/log/wtmp
 fi 
